@@ -1,10 +1,8 @@
 pipeline {
-    agent {
-        docker { image 'python:3.10' }
-    }
+    agent any
 
     stages {
-        stage('Clone Repository') {
+        stage('Clone') {
             steps {
                 git 'https://github.com/rithika-droid/quote-app.git'
             }
@@ -12,28 +10,36 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'python --version'
-                sh 'pip install -r requirements.txt || echo "No requirements.txt found, skipping..."'
-            }
-        }
-
-        stage('Run Flask App Build') {
-            steps {
-                echo 'Starting Flask App build...'
-                sh 'python app.py & sleep 5'
+                bat '''
+                python --version
+                pip install -r requirements.txt
+                '''
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t quote-app . || echo "Docker build skipped (no Docker in this agent)"'
+                bat 'docker build -t quoteapp .'
             }
         }
 
-        stage('Post Build') {
+        stage('Run Docker Container') {
             steps {
-                echo '✅ Quote App pipeline completed successfully!'
+                bat '''
+                docker stop quoteapp || echo "Container not running"
+                docker rm quoteapp || echo "No container to remove"
+                docker run -d -p 5000:5000 --name quoteapp quoteapp
+                '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Quote App deployed successfully!'
+        }
+        failure {
+            echo '❌ Build failed. Check logs for details.'
         }
     }
 }
