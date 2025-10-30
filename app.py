@@ -7,7 +7,8 @@ quotes = [
     "Push yourself, because no one else is going to do it for you.",
     "Great things never come from comfort zones.",
     "Dream it. Wish it. Do it.",
-    "Success doesn’t just find you. You have to go out and get it."
+    "Success doesn’t just find you. You have to go out and get it.",
+    "Honesty is best policy"
 ]
 
 @app.route('/')
