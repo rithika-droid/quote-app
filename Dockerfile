@@ -1,3 +1,5 @@
+# Dockerfile for Python Flask app
+
 FROM python:3.10-slim
 
 WORKDIR /app
